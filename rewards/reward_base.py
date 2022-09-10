@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from numbers import Number
 
 
 class RewardBase(ABC):
@@ -7,5 +6,5 @@ class RewardBase(ABC):
         super(RewardBase, self).__init__()
 
     @abstractmethod
-    def get_reward(self) -> Number:
+    def get_reward(self) -> float:
         pass

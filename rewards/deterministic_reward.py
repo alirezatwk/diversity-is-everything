@@ -1,5 +1,3 @@
-from numbers import Number
-
 from rewards.reward_base import RewardBase
 
 
@@ -8,5 +6,5 @@ class DeterministicReward(RewardBase):
         super(DeterministicReward, self).__init__()
         self.value = value
 
-    def get_reward(self) -> Number:
+    def get_reward(self) -> float:
         return self.value
