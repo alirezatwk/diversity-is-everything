@@ -1,4 +1,4 @@
-from utility_functions.base import UtilityFunctionBase
+from utility_functions import UtilityFunctionBase
 
 
 class IdenticalUtilityFunction(UtilityFunctionBase):

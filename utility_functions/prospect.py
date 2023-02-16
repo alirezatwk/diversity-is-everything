@@ -1,8 +1,8 @@
-from utility_functions.base import UtilityFunctionBase
+from utility_functions import UtilityFunctionBase
 
 
 class ProspectUtilityFunction(UtilityFunctionBase):
-    def __init__(self, alpha, beta, gamma):
+    def __init__(self, alpha: float, beta: float, gamma: float):
         super(ProspectUtilityFunction, self).__init__()
         self.alpha = alpha
         self.beta = beta
