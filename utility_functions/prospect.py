@@ -2,7 +2,7 @@ from utility_functions import UtilityFunctionBase
 
 
 class ProspectUtilityFunction(UtilityFunctionBase):
-    def __init__(self, alpha: float, beta: float, gamma: float):
+    def __init__(self, alpha: float, beta: float, gamma: float) -> None:
         super(ProspectUtilityFunction, self).__init__()
         self.alpha = alpha
         self.beta = beta

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class RewardBase(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         super(RewardBase, self).__init__()
 
     @abstractmethod

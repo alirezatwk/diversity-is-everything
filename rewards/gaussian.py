@@ -1,10 +1,10 @@
 import numpy as np
 
-from rewards.base import RewardBase
+from rewards import RewardBase
 
 
 class GaussianReward(RewardBase):
-    def __init__(self, mean, std):
+    def __init__(self, mean: float, std: float) -> None:
         super(GaussianReward, self).__init__()
         self.mean = mean
         self.std = std

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class UtilityFunctionBase(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         super(UtilityFunctionBase, self).__init__()
 
     @abstractmethod
