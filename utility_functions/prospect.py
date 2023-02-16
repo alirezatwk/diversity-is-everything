@@ -1,4 +1,4 @@
-from utility_functions.utility_function_base import UtilityFunctionBase
+from utility_functions.base import UtilityFunctionBase
 
 
 class ProspectUtilityFunction(UtilityFunctionBase):

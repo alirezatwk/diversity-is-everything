@@ -1,6 +1,6 @@
 import numpy as np
 
-from rewards.reward_base import RewardBase
+from rewards.base import RewardBase
 
 
 class GaussianReward(RewardBase):

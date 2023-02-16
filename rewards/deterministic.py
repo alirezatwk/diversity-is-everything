@@ -1,4 +1,4 @@
-from rewards.reward_base import RewardBase
+from rewards.base import RewardBase
 
 
 class DeterministicReward(RewardBase):

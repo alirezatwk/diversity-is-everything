@@ -1,5 +1,5 @@
 import numpy as np
-from agents.agent_base import AgentBase
+from agents.base import AgentBase
 
 
 class EpsilonGreedyAgent(AgentBase):

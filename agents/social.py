@@ -1,4 +1,4 @@
-from agents.agent_base import AgentBase
+from agents.base import AgentBase
 
 
 class SocialAgent(AgentBase):
