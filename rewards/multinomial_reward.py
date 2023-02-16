@@ -10,5 +10,4 @@ class MultinomialReward(RewardBase):
         self.probabilities = probabilities
 
     def get_reward(self) -> float:
-        ind = np.random.randint(len(self.values))
-        return self.values[ind]
+        return np.random.choice(self.values, p=self.probabilities)
