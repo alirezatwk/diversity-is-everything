@@ -1,15 +1,23 @@
 from abc import ABC, abstractmethod
 
+from environments import EnvironmentBase
+from utility_functions import UtilityFunctionBase
+
 
 class AgentBase(ABC):
-    def __init__(self, id, utility_function, environment):
+    def __init__(
+            self,
+            id: int,
+            utility_function: UtilityFunctionBase,
+            environment: EnvironmentBase,
+    ) -> None:
         super(AgentBase, self).__init__()
         self.id = id
         self.utility_function = utility_function
         self.environment = environment
         self.add_agent()
 
-    def add_agent(self):
+    def add_agent(self) -> None:
         if self.id != -1:
             self.environment.add_agent()
 
@@ -18,7 +26,7 @@ class AgentBase(ABC):
         pass
 
     @abstractmethod
-    def update(self, observation, inner_reward, done, info, action):
+    def update(self, observation: object, inner_reward: float, done: bool, info: object, action: int) -> None:
         pass
 
     def take_action(self) -> (object, float, bool, object, int):
