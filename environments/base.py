@@ -11,3 +11,6 @@ class EnvironmentBase(ABC):
 
     def step(self, action: int, id: int):
         pass
+
+    def actions_count(self) -> int:
+        pass

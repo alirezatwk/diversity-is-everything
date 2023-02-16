@@ -15,6 +15,7 @@ class AgentBase(ABC):
         self.id = id
         self.utility_function = utility_function
         self.environment = environment
+        self.n_actions = environment.actions_count()
         self.add_agent()
 
     def add_agent(self) -> None:
