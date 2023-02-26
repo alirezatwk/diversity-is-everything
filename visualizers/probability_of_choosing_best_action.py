@@ -16,6 +16,8 @@ class ProbabilityOfChoosingBestActionVisualizer:
     def _read_results(self) -> dict:  # TODO: Use the correct type hint.
         agents_probabilities = {}
         for file_name in sorted(os.listdir(self.data_path)):
+            if 'pkl' not in file_name:
+                continue
             with open(os.path.join(self.data_path, file_name), 'rb') as pickle_file:
                 agent_actions = pickle.load(pickle_file)
                 name = ''.join(file_name.split('.')[:-1])
