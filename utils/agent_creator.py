@@ -27,12 +27,16 @@ class AgentCreator:
     def set_seed(seed: int = SEED):
         np.random.seed(seed)
 
-    def get_agent(self, count: int = 1):
+    def create_agent(self):
+        alpha = np.random.normal(loc=self.alpha_mean, scale=self.alpha_std)
+        beta = np.random.normal(loc=self.beta_mean, scale=self.beta_std)
+        gamma = np.random.normal(loc=self.gamma_mean, scale=self.gamma_std)
+        prospect_agent = ProspectUtilityFunction(alpha=alpha, beta=beta, gamma=gamma)
+        return prospect_agent
+
+    def create_agents(self, count: int):
         agents = []
         for agent_id in range(count):
-            alpha = np.random.normal(loc=self.alpha_mean, scale=self.alpha_std)
-            beta = np.random.normal(loc=self.beta_mean, scale=self.beta_std)
-            gamma = np.random.normal(loc=self.gamma_mean, scale=self.gamma_std)
-            prospect_agent = ProspectUtilityFunction(alpha=alpha, beta=beta, gamma=gamma)
+            prospect_agent = self.create_agent()
             agents.append(prospect_agent)
         return agents
