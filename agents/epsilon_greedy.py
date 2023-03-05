@@ -29,5 +29,5 @@ class EpsilonGreedyAgent(AgentBase):
         return self._get_best_action()
 
     def update(self, observation, inner_reward, done, info, action):
-        self.n_actions[action] += 1
-        self.q_values[action] += (inner_reward - self.q_values[action]) / self.n_actions[action]
+        self.steps[action] += 1
+        self.q_values[action] += (inner_reward - self.q_values[action]) / self.steps[action]
