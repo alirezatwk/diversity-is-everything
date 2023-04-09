@@ -1,4 +1,5 @@
 from rewards import RewardBase
+from utility_functions import UtilityFunctionBase
 
 
 class DeterministicReward(RewardBase):
@@ -8,3 +9,6 @@ class DeterministicReward(RewardBase):
 
     def get_reward(self) -> float:
         return self.value
+
+    def get_expected_utility(self, utility_function: UtilityFunctionBase) -> float:
+        return utility_function.apply(self.value)
