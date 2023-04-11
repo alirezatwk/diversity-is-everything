@@ -8,13 +8,22 @@ from utility_functions import UtilityFunctionBase
 class EpsilonGreedyAgent(AgentBase):
     def __init__(
             self,
-            id: int,
-            environment: EnvironmentBase,
+            id: str,
             utility_function: UtilityFunctionBase,
             epsilon: float,
+
+            environment: EnvironmentBase = None,
     ):
         super(EpsilonGreedyAgent, self).__init__(id=id, utility_function=utility_function, environment=environment)
         self.epsilon = epsilon
+        if environment is not None:
+            self.steps = np.zeros(self.n_actions)
+            self.q_values = np.zeros(self.n_actions)
+
+    def set_environment(self, environment: EnvironmentBase):
+        self.environment = environment
+        self.n_actions = environment.get_n_actions()
+        self.environment.add_agent(agent_id=self.id, agent=self)
         self.steps = np.zeros(self.n_actions)
         self.q_values = np.zeros(self.n_actions)
 
@@ -30,4 +39,7 @@ class EpsilonGreedyAgent(AgentBase):
 
     def update(self, observation, inner_reward, done, info, action):
         self.steps[action] += 1
-        self.q_values[action] += (inner_reward - self.q_values[action]) / self.steps[action]
+        if self.learning_rate is not None:
+            self.q_values[action] += (inner_reward - self.q_values[action]) * self.learning_rate
+        else:
+            self.q_values[action] += (inner_reward - self.q_values[action]) / self.steps[action]

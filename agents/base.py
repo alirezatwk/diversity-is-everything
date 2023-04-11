@@ -7,20 +7,22 @@ from utility_functions import UtilityFunctionBase
 class AgentBase(ABC):
     def __init__(
             self,
-            id: int,
+            id: str,
             utility_function: UtilityFunctionBase,
-            environment: EnvironmentBase,
+            learning_rate: float = None,
+            environment: EnvironmentBase = None,
     ) -> None:
         super(AgentBase, self).__init__()
         self.id = id
         self.utility_function = utility_function
-        self.environment = environment
-        self.n_actions = environment.actions_count()
-        self.add_agent()
+        self.learning_rate = learning_rate
+        if environment is not None:
+            self.set_environment(environment=environment)
 
-    def add_agent(self) -> None:
-        if self.id != -1:
-            self.environment.add_agent()
+    def set_environment(self, environment: EnvironmentBase):
+        self.environment = environment
+        self.n_actions = environment.get_n_actions()
+        self.environment.add_agent(agent_id=self.id, agent=self)
 
     @abstractmethod
     def select_action(self) -> int:
