@@ -1,5 +1,6 @@
 from typing import List
 
+from agents import AgentBase
 from environments import EnvironmentBase
 from rewards import RewardBase
 
@@ -12,8 +13,14 @@ class MultiArmedBanditEnvironment(EnvironmentBase):
         self.agents_actions = {}
         self.is_submitted = False
 
-    def add_agent(self, agent_id: str, agent):  # TODO: Add type hint
-        assert self.is_submitted
+    def _calculate_reward(self, action: int) -> float:
+        return self.arms_rewards[action].get_reward()
+
+    def _update_state(self, action: int, agent_id: str):
+        self.agents_actions[agent_id].append(action)
+
+    def add_agent(self, agent_id: str, agent: AgentBase):
+        assert not self.is_submitted
         self.agents[agent_id] = agent
         self.agents_actions[agent_id] = []
 
@@ -24,16 +31,13 @@ class MultiArmedBanditEnvironment(EnvironmentBase):
         return list(self.agents.keys())
 
     def submit(self):
+        assert not self.is_submitted
         self.is_submitted = True
-
-    def _calculate_reward(self, action: int) -> float:
-        return self.arms_rewards[action].get_reward()
-
-    def _update_state(self, action: int, agent_id: str):
-        self.agents_actions[agent_id].append(action)
+        for agent_id in self.agents:
+            self.agents[agent_id].set_environment_info_after_submission()
 
     def step(self, action: int, agent_id: str):
-        assert not self.is_submitted
+        assert self.is_submitted
         reward = self._calculate_reward(action=action)
         self._update_state(action=action, agent_id=agent_id)
         observation = {}
@@ -50,3 +54,4 @@ class MultiArmedBanditEnvironment(EnvironmentBase):
     def reset(self):
         self.agents = {}
         self.agents_actions = {}
+        self.is_submitted = False
