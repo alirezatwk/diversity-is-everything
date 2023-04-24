@@ -1,3 +1,4 @@
+import argparse
 import os
 import pickle
 from typing import List
@@ -45,11 +46,29 @@ class ProbabilityOfChoosingBestActionVisualizer:
         fig.write_html(self.write_path)
 
 
+def get_args():
+    """
+    For example:
+        --best-action 0
+        --max-trial 100
+        --data-path /home/Alireza/results/actions/1
+        --write-path /home/Alireza/results/actions/1/visualization.html
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--best-action', type=int, required=True)
+    parser.add_argument('--max-trial', type=int, required=True)
+    parser.add_argument('--data-path', type=str, required=True)
+    parser.add_argument('--write-path', type=str, required=True)
+    arguments = parser.parse_args()
+    return arguments
+
+
 if __name__ == '__main__':
+    args = get_args()
     visualizer = ProbabilityOfChoosingBestActionVisualizer(
-        best_action=0,
-        max_trial=100,
-        data_path='/home/Alireza/results/actions/1',
-        write_path='/home/Alireza/results/actions/1/visualization.html',
+        best_action=args.best_action,
+        max_trial=args.max_trial,
+        data_path=args.data_path,
+        write_path=args.write_path,
     )
     visualizer.visualize()
