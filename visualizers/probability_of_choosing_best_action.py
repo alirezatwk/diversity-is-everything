@@ -67,7 +67,7 @@ if __name__ == '__main__':
     args = get_args()
     visualizer = ProbabilityOfChoosingBestActionVisualizer(
         best_action=args.best_action,
-        max_trial=args.max_trail,
+        max_trial=args.max_trial,
         data_path=args.data_path,
         write_path=args.write_path,
     )
