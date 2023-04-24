@@ -7,7 +7,7 @@ from utility_functions import ProspectUtilityFunction
 class AgentCreator:
     def __init__(
             self,
-            seed: int = SEED,
+            seed: int,
             alpha_mean: float = ALPHA_MEAN,
             alpha_std: float = ALPHA_STD,
             beta_mean: float = BETA_MEAN,
