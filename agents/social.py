@@ -39,10 +39,6 @@ class SocialAgent(AgentBase):
     def _update_social_preference(self, reward: float, action: int) -> None:
         same_action = [i for i in range(self.n_agents)
                        if self.environment.get_action(step=self.step-2, agent_id=self.agents_id[i]) == action]
-        # TODO: What is this?
-        # if self.id not in same_action:
-        #     if self.individual.select_action() == action:
-        #         same_action.append(self.id)
         self.preference = np.round(self.preference, 2)
         sum_preferences = np.sum(np.exp(self.preference))
         mask = np.ones(len(self.preference)) * self.alpha
