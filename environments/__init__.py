@@ -1,2 +1,2 @@
 from .base import EnvironmentBase
-# from .multi_armed_bandit import MultiArmedBanditEnvironment
+from .multi_armed_bandit import MultiArmedBanditEnvironment

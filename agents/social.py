@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from agents import AgentBase
 from configs import EPSILON, SOCIAL_ALPHA
-from environments import EnvironmentBase
+
+if TYPE_CHECKING:
+    from environments import EnvironmentBase
 
 
 class SocialAgent(AgentBase):
@@ -10,7 +14,7 @@ class SocialAgent(AgentBase):
             self,
             id: str,
             individual_agent: AgentBase,
-            environment: EnvironmentBase,
+            environment: 'EnvironmentBase',
             epsilon: float = EPSILON,
             alpha: float = SOCIAL_ALPHA,
     ):

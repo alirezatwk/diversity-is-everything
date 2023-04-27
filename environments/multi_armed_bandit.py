@@ -1,12 +1,14 @@
-from typing import List
+from typing import List, TYPE_CHECKING
 
-from agents import AgentBase
 from environments import EnvironmentBase
-from rewards import RewardBase
+
+if TYPE_CHECKING:
+    from agents import AgentBase
+    from rewards import RewardBase
 
 
 class MultiArmedBanditEnvironment(EnvironmentBase):
-    def __init__(self, rewards: List[RewardBase]):
+    def __init__(self, rewards: List['RewardBase']):
         super(MultiArmedBanditEnvironment, self).__init__()
         self.arms_rewards = rewards
         self.agents = {}
@@ -19,7 +21,7 @@ class MultiArmedBanditEnvironment(EnvironmentBase):
     def _update_state(self, action: int, agent_id: str):
         self.agents_actions[agent_id].append(action)
 
-    def add_agent(self, agent_id: str, agent: AgentBase):
+    def add_agent(self, agent_id: str, agent: 'AgentBase'):
         assert not self.is_submitted
         self.agents[agent_id] = agent
         self.agents_actions[agent_id] = []
