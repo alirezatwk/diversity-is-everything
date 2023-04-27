@@ -1,38 +1,43 @@
 from abc import ABC, abstractmethod
+from typing import Tuple
 
 from environments import EnvironmentBase
-from utility_functions import UtilityFunctionBase
 
 
 class AgentBase(ABC):
-    def __init__(
-            self,
-            id: int,
-            utility_function: UtilityFunctionBase,
-            environment: EnvironmentBase,
-    ) -> None:
+    def __init__(self, id: str, environment: EnvironmentBase, part_of_agent: bool = False) -> None:
         super(AgentBase, self).__init__()
         self.id = id
-        self.utility_function = utility_function
         self.environment = environment
-        self.n_actions = environment.actions_count()
-        self.add_agent()
+        self.n_actions = environment.get_n_actions()
+        if not part_of_agent:
+            environment.add_agent(agent_id=self.id, agent=self)
 
-    def add_agent(self) -> None:
-        if self.id != -1:
-            self.environment.add_agent()
+    @abstractmethod
+    def _personalize_reward(self, reward: float) -> float:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_environment_info_after_submission(self):
+        raise NotImplementedError()
 
     @abstractmethod
     def select_action(self) -> int:
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
-    def update(self, observation: object, inner_reward: float, done: bool, info: object, action: int) -> None:
-        pass
+    def update(self, observation: object, personalized_reward: float, done: bool, info: object, action: int) -> None:
+        raise NotImplementedError()
 
-    def take_action(self) -> (object, float, bool, object, int):
+    def take_action(self) -> Tuple[object, float, bool, object, int]:
         action = self.select_action()
         observation, reward, done, info = self.environment.step(action, self.id)
-        inner_reward = self.utility_function.apply(reward)
-        self.update(observation, inner_reward, done, info, action)
-        return observation, inner_reward, done, info, action
+        personalized_reward = self._personalize_reward(reward=reward)
+        self.update(
+            observation=observation,
+            personalized_reward=personalized_reward,
+            done=done,
+            info=info,
+            action=action
+        )
+        return observation, personalized_reward, done, info, action
