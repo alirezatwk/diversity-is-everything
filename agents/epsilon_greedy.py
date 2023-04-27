@@ -40,8 +40,6 @@ class EpsilonGreedyAgent(AgentBase):
     def update(self, observation: object, personalized_reward: float, done: bool, info: object, action: int):
         self.steps[action] += 1
         self.q_values[action] += (personalized_reward - self.q_values[action]) / self.steps[action]
-        # TODO: Create a class for epsilon greedy with learning rate
-        # self.q_values[action] += (inner_reward - self.q_values[action]) * self.learning_rate
 
     def set_environment_info_after_submission(self):
         pass
