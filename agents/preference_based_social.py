@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from environments import EnvironmentBase
 
 
-class SocialAgent(AgentBase):
+class PreferenceBasedSocialAgent(AgentBase):
     def __init__(
             self,
             id: str,
@@ -18,7 +18,7 @@ class SocialAgent(AgentBase):
             epsilon: float = EPSILON,
             alpha: float = SOCIAL_ALPHA,
     ):
-        super(SocialAgent, self).__init__(
+        super(PreferenceBasedSocialAgent, self).__init__(
             id=id,
             environment=environment,
             part_of_agent=False,
