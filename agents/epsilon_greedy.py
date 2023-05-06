@@ -17,7 +17,7 @@ class EpsilonGreedyAgent(AgentBase):
         super(EpsilonGreedyAgent, self).__init__(
             id=id,
             environment=environment,
-            part_of_agent=part_of_agent
+            part_of_agent=part_of_agent,
         )
         self.epsilon = epsilon
         self.utility_function = utility_function
