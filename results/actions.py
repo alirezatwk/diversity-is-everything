@@ -23,3 +23,5 @@ class ActionsResult:
     def probability_of_choosing_action(self, desired_action: int) -> np.array:
         return np.mean(self.actions == desired_action, axis=0)
 
+    def error_bound_of_choosing_action(self, desired_action: int) -> np.array:
+        return 2 * np.std(self.actions == desired_action, axis=0) / np.sqrt(self.actions.shape[0])
