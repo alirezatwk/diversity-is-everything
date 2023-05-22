@@ -40,6 +40,8 @@ class Simulate():
                  LAMBDA_FE: float,
                  CONJUGATE_PRIOR: str,
                  C_UCB: float,
+                 B1_OUCB: float,
+                 B2_OUCB: float,
                  EPSILON: float,
                  LR: float,
                  DIVERSITY: bool, 
@@ -77,6 +79,8 @@ class Simulate():
         self.LR = LR
         self.CONJUGATE_PRIOR = CONJUGATE_PRIOR
         self.C_UCB = C_UCB
+        self.B1_OUCB = B1_OUCB
+        self.B2_OUCB = B2_OUCB
         self.DIVERSITY = DIVERSITY
 
         self.ALPHA_MEAN = ALPHA_MEAN
@@ -97,7 +101,7 @@ class Simulate():
         print(self.EUS, self.EXP_U_BESTS, self.BEST_ACTIONS)
 
     def _create_ind_agent(self, agent_class_name: str, agent_id: str, uf: UtilityFunctionBase, part_of_agent: bool) -> AgentBase:
-        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent'] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent"] 
+        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent', "UCBAgent"] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent"] 
         assert agent_class_name in Ind_Models
 
         if agent_class_name == 'ThompsonSamplingAgent':
@@ -105,6 +109,9 @@ class Simulate():
 
         elif agent_class_name == 'EpsilonGreedyAgent':
             agent = EpsilonGreedyAgent(id=agent_id, utility_function= uf, part_of_agent= part_of_agent, epsilon= self.AGENT_EPSILON)
+        
+        elif agent_class_name == "UCBAgent":
+            agent = UCBAgent(id= agent_id, c_ucb = self.C_UCB, utility_function= uf)        
 
         elif agent_class_name == "AlwaysBestAgent":
             agent = AlwaysBestAgent(id=agent_id, utility_function= uf, part_of_agent= part_of_agent)
@@ -118,9 +125,9 @@ class Simulate():
         return agent 
     
     def _create_agent(self, agent_soc_class_name:str, agent_ind_class_name:str, agent_id:str, uf: UtilityFunctionBase) -> AgentBase:
-        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent'] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent", "-"] 
+        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent', "UCBAgent"] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent", "-"] 
         FE_Models = ["FreeEnergySocialAgent_M1_1_1"]
-        Other_Social_Models = ["PreferenceBasedSocialAgent", "TUCBAgent", "-"]
+        Other_Social_Models = ["PreferenceBasedSocialAgent", "TUCBAgent", "OUCBAgent","-"]
         Soc_Models = FE_Models + Other_Social_Models
 
         assert agent_soc_class_name in Soc_Models
@@ -135,8 +142,11 @@ class Simulate():
             agent = FreeEnergySocialAgent_M1_1_1(id= agent_id, individual_agent= ind_agent, c= self.C_FE, n0= self.N0_FE, 
                                                  lamda= self.LAMBDA_FE, conjugate_prior= self.CONJUGATE_PRIOR, epsilon= self.EPSILON)
         
-        elif agent_soc_class_name in "TUCBAgent":
+        elif agent_soc_class_name == "TUCBAgent":
             agent = TUCBAgent(id= agent_id, c_ucb = self.C_UCB, utility_function= uf)
+
+        elif agent_soc_class_name == "OUCBAgent":
+            agent = OUCBAgent(id= agent_id, c_ucb = self.C_UCB, b1= self.B1_OUCB, b2= self.B2_OUCB, utility_function= uf)
         
         else:
             agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= False)
@@ -373,6 +383,8 @@ if __name__ == '__main__':
                  LAMBDA_FE= args.LAMBDA_FE,
                  CONJUGATE_PRIOR= args.CONJUGATE_PRIOR,
                  C_UCB= args.C_UCB,
+                 B1_OUCB= args.B1_OUCB, 
+                 B2_OUCB= args.B2_OUCB,
                  DIVERSITY= args.DIVERSITY, 
                  EPSILON= args.EPSILON,
                  LR= args.LR,

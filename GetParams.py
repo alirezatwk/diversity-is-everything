@@ -36,6 +36,8 @@ def get_args():
     parser.add_argument('--LAMBDA_FE', default = 0.99, type= float)
     parser.add_argument('--AGENT_EPSILON', default = 0.1, type= float)
     parser.add_argument('--C_UCB', default = 2, type= float)
+    parser.add_argument('--B1_OUCB', default= 0.5, type= float)
+    parser.add_argument('--B2_OUCB', default= 0.5, type= float)
     parser.add_argument('--LR', default =  0.1, type= float)
     parser.add_argument('--DIVERSITY', action= 'store_false') 
 

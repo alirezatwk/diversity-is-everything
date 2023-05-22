@@ -10,3 +10,5 @@ from .always_best_action import AlwaysBestAgent
 from .always_random_action import AlwaysRandomAgent
 from .always_worst_action import AlwaysWorstAgent
 from .TUCB import TUCBAgent
+from .UCB import UCBAgent
+from .OUCB import OUCBAgent
