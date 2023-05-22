@@ -10,6 +10,7 @@ class TUCBAgent(AgentBase):
     def __init__(
             self,
             c_ucb:float,
+            epsilon:float,
             id: str,
             utility_function: UtilityFunctionBase,
             lr: float = None,
@@ -23,6 +24,7 @@ class TUCBAgent(AgentBase):
         self.utility_function = utility_function
         self.lr = lr
         self.c_ucb = c_ucb
+        self.epsilon = epsilon
         self.trial = 0                                          #number of total trials 
         self.actions = []
             
@@ -45,7 +47,7 @@ class TUCBAgent(AgentBase):
 
         if self.trial > 1: 
             for agent_id in self.other_agents_id:
-                action = self.environment.get_action(step=self.step-2, agent_id=agent_id)
+                action = self.environment.get_action(step=self.trial-2, agent_id=agent_id)
                 self.N_T[action] = self.N_T[action] + (1/len(self.other_agents_id))
 
 
@@ -53,8 +55,7 @@ class TUCBAgent(AgentBase):
         if self.trial < self.n_actions:
             action = np.random.choice(np.flatnonzero(self.N == 0))
         else:        
-            T_optimism = np.sqrt(np.maximum((self.N_T - self.N)/(self.N_T),np.zeros((self.n_actions,1))))
-
+            T_optimism = np.sqrt(np.maximum((self.N_T - self.N)/(self.N_T + self.epsilon),np.zeros((self.n_actions,1))))
             self.UCB = self.Q + np.sqrt(self.c_ucb * np.log(self.trial + 1)/(self.N)) * T_optimism
             action = np.random.choice(np.flatnonzero(self.UCB == self.UCB.max()))
         return action 

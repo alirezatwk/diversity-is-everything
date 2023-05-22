@@ -49,7 +49,7 @@ class OUCBAgent(AgentBase):
 
         if self.trial > 1: 
             for agent_id in self.other_agents_id:
-                action = self.environment.get_action(step=self.step-2, agent_id=agent_id)
+                action = self.environment.get_action(step=self.trial-2, agent_id=agent_id)
                 self.N_T[action] = self.N_T[action] + (1/len(self.other_agents_id))
 
     def select_action(self):

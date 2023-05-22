@@ -143,7 +143,7 @@ class Simulate():
                                                  lamda= self.LAMBDA_FE, conjugate_prior= self.CONJUGATE_PRIOR, epsilon= self.EPSILON)
         
         elif agent_soc_class_name == "TUCBAgent":
-            agent = TUCBAgent(id= agent_id, c_ucb = self.C_UCB, utility_function= uf)
+            agent = TUCBAgent(id= agent_id, c_ucb = self.C_UCB, epsilon = self.EPSILON, utility_function= uf)
 
         elif agent_soc_class_name == "OUCBAgent":
             agent = OUCBAgent(id= agent_id, c_ucb = self.C_UCB, b1= self.B1_OUCB, b2= self.B2_OUCB, utility_function= uf)
