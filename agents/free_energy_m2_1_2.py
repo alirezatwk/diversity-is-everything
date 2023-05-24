@@ -120,8 +120,10 @@ class FreeEnergySocialAgent_M2_1_2(AgentBase):
         # U = np.round(U, 8)
         Pi_star = self.pi_TS * np.exp((1/self.c) * U)
         # Pi_star = np.round(Pi_star, 8)
-        self.Pi_star = Pi_star / np.sum(Pi_star, axis = 1, keepdims = True)
-        FE = np.sum(self.Pi_star * (self.c*np.log((self.Pi_star + self.epsilon)/(self.pi_TS + self.epsilon)) - U), axis = 1)
+        Z =  np.sum(Pi_star, axis = 1, keepdims = True)
+        self.Pi_star = Pi_star / Z 
+        FE = self.c * np.log(1/Z)
+        # FE = np.sum(self.Pi_star * (self.c*np.log((self.Pi_star + self.epsilon)/(self.pi_TS + self.epsilon)) - U), axis = 1)
         return FE
     
     def _update_FE(self, reward: float, action: int) -> None:
