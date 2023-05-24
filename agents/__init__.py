@@ -9,6 +9,7 @@ from .free_energy_m3_1_1 import FreeEnergySocialAgent_M3_1_1
 from .free_energy_m3_1_2 import FreeEnergySocialAgent_M3_1_2
 from .thompson_sampling import ThompsonSamplingAgent
 from .always_best_action import AlwaysBestAgent
+from .always_second_best_action import AlwaysSecondBestAgent
 from .always_random_action import AlwaysRandomAgent
 from .always_worst_action import AlwaysWorstAgent
 from .TUCB import TUCBAgent
