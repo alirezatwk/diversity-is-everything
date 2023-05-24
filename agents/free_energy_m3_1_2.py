@@ -8,7 +8,7 @@ from agents import AgentBase
 from environments import EnvironmentBase
 
 
-class FreeEnergySocialAgent_M2_1_1(AgentBase):
+class FreeEnergySocialAgent_M3_1_2(AgentBase):
     def __init__(
             self,
             id: str,
@@ -20,7 +20,7 @@ class FreeEnergySocialAgent_M2_1_1(AgentBase):
             epsilon: float,
             environment: EnvironmentBase = None,
     ):
-        super(FreeEnergySocialAgent_M2_1_1, self).__init__(
+        super(FreeEnergySocialAgent_M3_1_2, self).__init__(
             id=id,
             environment=environment,
             part_of_agent=False,
@@ -146,7 +146,7 @@ class FreeEnergySocialAgent_M2_1_1(AgentBase):
             act = self.environment.get_action(step=self.step-2, agent_id=self.agents_id[i])
             self.social_information[i] =  (1 - self.lamda) * self.social_information[i] + self.lamda * np.eye(1, self.n_actions, k = act)
 
-        self.social_information[self.agents_id.index(self.id)] = self.pi_TS
+        self.social_information[self.agents_id.index(self.id)] = (self.pi_TS == np.amax(self.pi_TS)).astype(int)
         
     def _select_agent(self) -> int:
         # select the agent based on selecting policy
@@ -157,8 +157,8 @@ class FreeEnergySocialAgent_M2_1_1(AgentBase):
     def select_action(self) -> int:
         social_agent_id = self._select_agent()
         if self.agents_id[social_agent_id] == self.id or self.step == 0:
-            # action = np.random.choice(self.n_actions, p = self.Pi_star[self.agents_id.index(self.id)])
-            action = self.individual.select_action()
+            action = np.random.choice(self.n_actions, p = self.Pi_star[self.agents_id.index(self.id)])
+            # action = self.individual.select_action()
             self.history.append(self.id)
         else:
             action = np.random.choice(self.n_actions, p = self.Pi_star[social_agent_id])

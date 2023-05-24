@@ -125,28 +125,49 @@ class Simulate():
         return agent 
     
     def _create_agent(self, agent_soc_class_name:str, agent_ind_class_name:str, agent_id:str, uf: UtilityFunctionBase) -> AgentBase:
-        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent', "UCBAgent"] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent", "-"] 
-        FE_Models = ["FreeEnergySocialAgent_M1_1_1"]
-        Other_Social_Models = ["PreferenceBasedSocialAgent", "TUCBAgent", "OUCBAgent","-"]
+        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent'] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent", "-"] 
+        FE_Models = ["FreeEnergySocialAgent_M1_1_1","FreeEnergySocialAgent_M1_1_2",
+                     "FreeEnergySocialAgent_M2_1_1", "FreeEnergySocialAgent_M2_1_2",
+                     "FreeEnergySocialAgent_M3_1_1", "FreeEnergySocialAgent_M3_1_2"]
+        Other_Social_Models = ["PreferenceBasedSocialAgent", "TUCBAgent", "-"]
         Soc_Models = FE_Models + Other_Social_Models
 
         assert agent_soc_class_name in Soc_Models
         assert agent_ind_class_name in Ind_Models
-
-        if agent_soc_class_name == "PreferenceBasedSocialAgent":
+        
+        if agent_soc_class_name in FE_Models:
+            if agent_soc_class_name == "FreeEnergySocialAgent_M1_1_1":
+                ind_agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= True)
+                agent = FreeEnergySocialAgent_M1_1_1(id= agent_id, individual_agent= ind_agent, c= self.C_FE, n0= self.N0_FE, 
+                                                 lamda= self.LAMBDA_FE, conjugate_prior= self.CONJUGATE_PRIOR, epsilon= self.EPSILON)
+            elif agent_soc_class_name == "FreeEnergySocialAgent_M1_1_2":
+                ind_agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= True)
+                agent = FreeEnergySocialAgent_M1_1_2(id= agent_id, individual_agent= ind_agent, c= self.C_FE, n0= self.N0_FE, 
+                                                 lamda= self.LAMBDA_FE, conjugate_prior= self.CONJUGATE_PRIOR, epsilon= self.EPSILON)
+            elif agent_soc_class_name == "FreeEnergySocialAgent_M2_1_1":
+                ind_agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= True)
+                agent = FreeEnergySocialAgent_M2_1_1(id= agent_id, individual_agent= ind_agent, c= self.C_FE, n0= self.N0_FE, 
+                                                 lamda= self.LAMBDA_FE, conjugate_prior= self.CONJUGATE_PRIOR, epsilon= self.EPSILON)
+            elif agent_soc_class_name == "FreeEnergySocialAgent_M2_1_2":
+                ind_agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= True)
+                agent = FreeEnergySocialAgent_M2_1_2(id= agent_id, individual_agent= ind_agent, c= self.C_FE, n0= self.N0_FE, 
+                                                 lamda= self.LAMBDA_FE, conjugate_prior= self.CONJUGATE_PRIOR, epsilon= self.EPSILON)
+            elif agent_soc_class_name == "FreeEnergySocialAgent_M3_1_1":
+                ind_agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= True)
+                agent = FreeEnergySocialAgent_M3_1_1(id= agent_id, individual_agent= ind_agent, c= self.C_FE, n0= self.N0_FE, 
+                                                 lamda= self.LAMBDA_FE, conjugate_prior= self.CONJUGATE_PRIOR, epsilon= self.EPSILON)
+            elif agent_soc_class_name == "FreeEnergySocialAgent_M3_1_2":
+                ind_agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= True)
+                agent = FreeEnergySocialAgent_M3_1_2(id= agent_id, individual_agent= ind_agent, c= self.C_FE, n0= self.N0_FE, 
+                                                 lamda= self.LAMBDA_FE, conjugate_prior= self.CONJUGATE_PRIOR, epsilon= self.EPSILON)
+                        
+        elif agent_soc_class_name == "PreferenceBasedSocialAgent":
             ind_agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= True)
             agent = PreferenceBasedSocialAgent(id= agent_id, individual_agent= ind_agent, epsilon= self.EPSILON, lr= self.LR)
-        
-        elif agent_soc_class_name == "FreeEnergySocialAgent_M1_1_1":
-            ind_agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= True)
-            agent = FreeEnergySocialAgent_M1_1_1(id= agent_id, individual_agent= ind_agent, c= self.C_FE, n0= self.N0_FE, 
-                                                 lamda= self.LAMBDA_FE, conjugate_prior= self.CONJUGATE_PRIOR, epsilon= self.EPSILON)
-        
-        elif agent_soc_class_name == "TUCBAgent":
-            agent = TUCBAgent(id= agent_id, c_ucb = self.C_UCB, epsilon = self.EPSILON, utility_function= uf)
 
-        elif agent_soc_class_name == "OUCBAgent":
-            agent = OUCBAgent(id= agent_id, c_ucb = self.C_UCB, b1= self.B1_OUCB, b2= self.B2_OUCB, utility_function= uf)
+        
+        elif agent_soc_class_name in "TUCBAgent":
+            agent = TUCBAgent(id= agent_id, c_ucb = self.C_UCB, utility_function= uf)
         
         else:
             agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= False)

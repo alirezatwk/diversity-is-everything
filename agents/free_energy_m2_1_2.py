@@ -122,7 +122,7 @@ class FreeEnergySocialAgent_M2_1_2(AgentBase):
         # Pi_star = np.round(Pi_star, 8)
         Z =  np.sum(Pi_star, axis = 1, keepdims = True)
         self.Pi_star = Pi_star / Z 
-        FE = self.c * np.log(1/Z)
+        FE = (self.c * np.log(1/Z)).squeeze()
         # FE = np.sum(self.Pi_star * (self.c*np.log((self.Pi_star + self.epsilon)/(self.pi_TS + self.epsilon)) - U), axis = 1)
         return FE
     
@@ -188,7 +188,7 @@ class FreeEnergySocialAgent_M2_1_2(AgentBase):
             info=info,
             action=action
         )
-        info = self.FE
+        info['FE']= self.FE
         return observation, personalized_reward, done, info, action
     
     def set_environment_info_after_submission(self):
@@ -198,3 +198,9 @@ class FreeEnergySocialAgent_M2_1_2(AgentBase):
         self.pi_TS = self._calculate_TS_policy()
         self.FE = self._FE_Calculator()
         self.agents_id = self.environment.get_agents_id()
+
+    def get_TS_policy(self):
+        return self.pi_TS
+    
+    def get_Pi_Star(self):
+        return self.Pi_star

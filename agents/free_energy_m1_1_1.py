@@ -123,7 +123,7 @@ class FreeEnergySocialAgent_M1_1_1(AgentBase):
         # Pi_star = np.round(Pi_star, 8)
         Z =  np.sum(Pi_star, axis = 1, keepdims = True)
         self.Pi_star = Pi_star / Z 
-        FE = self.c * np.log(1/Z)
+        FE = (self.c * np.log(1/Z)).squeeze()
         # FE = np.sum(self.Pi_star * (self.c*np.log((self.Pi_star + self.epsilon)/(self.pi_TS + self.epsilon)) - U), axis = 1)
         return FE
     
