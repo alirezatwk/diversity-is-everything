@@ -101,7 +101,7 @@ class Simulate():
         print(self.EUS, self.EXP_U_BESTS, self.BEST_ACTIONS)
 
     def _create_ind_agent(self, agent_class_name: str, agent_id: str, uf: UtilityFunctionBase, part_of_agent: bool) -> AgentBase:
-        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent', "UCBAgent"] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent"] 
+        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent'] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent"] 
         assert agent_class_name in Ind_Models
 
         if agent_class_name == 'ThompsonSamplingAgent':
@@ -109,9 +109,6 @@ class Simulate():
 
         elif agent_class_name == 'EpsilonGreedyAgent':
             agent = EpsilonGreedyAgent(id=agent_id, utility_function= uf, part_of_agent= part_of_agent, epsilon= self.AGENT_EPSILON)
-        
-        elif agent_class_name == "UCBAgent":
-            agent = UCBAgent(id= agent_id, c_ucb = self.C_UCB, utility_function= uf)        
 
         elif agent_class_name == "AlwaysBestAgent":
             agent = AlwaysBestAgent(id=agent_id, utility_function= uf, part_of_agent= part_of_agent)
@@ -120,16 +117,19 @@ class Simulate():
             agent = AlwaysRandomAgent(id=agent_id, utility_function= uf, part_of_agent= part_of_agent)
 
         elif agent_class_name == "AlwaysWorstAgent":
-            agent = AlwaysWorstAgent(id=agent_id, utility_function= uf, part_of_agent= part_of_agent)        
+            agent = AlwaysWorstAgent(id=agent_id, utility_function= uf, part_of_agent= part_of_agent) 
+
+        elif agent_class_name == "AlwaysSecondBestAgent":     
+            agent = AlwaysSecondBestAgent(id=agent_id, utility_function= uf, part_of_agent= part_of_agent)
 
         return agent 
     
     def _create_agent(self, agent_soc_class_name:str, agent_ind_class_name:str, agent_id:str, uf: UtilityFunctionBase) -> AgentBase:
-        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent'] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent", "-"] 
+        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent'] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent", "AlwaysSecondBestAgent","PercentBestAgent","-"] 
         FE_Models = ["FreeEnergySocialAgent_M1_1_1","FreeEnergySocialAgent_M1_1_2",
                      "FreeEnergySocialAgent_M2_1_1", "FreeEnergySocialAgent_M2_1_2",
                      "FreeEnergySocialAgent_M3_1_1", "FreeEnergySocialAgent_M3_1_2"]
-        Other_Social_Models = ["PreferenceBasedSocialAgent", "TUCBAgent", "-"]
+        Other_Social_Models = ["PreferenceBasedSocialAgent", "TUCBAgent", "OUCBAgent","-"]
         Soc_Models = FE_Models + Other_Social_Models
 
         assert agent_soc_class_name in Soc_Models
@@ -164,16 +164,18 @@ class Simulate():
         elif agent_soc_class_name == "PreferenceBasedSocialAgent":
             ind_agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= True)
             agent = PreferenceBasedSocialAgent(id= agent_id, individual_agent= ind_agent, epsilon= self.EPSILON, lr= self.LR)
-
         
         elif agent_soc_class_name in "TUCBAgent":
             agent = TUCBAgent(id= agent_id, c_ucb = self.C_UCB, utility_function= uf)
         
+        elif agent_soc_class_name in "OUCBAgent":
+            agent = OUCBAgent(id= agent_id, c_ucb = self.C_UCB, b1=self.B1_OUCB , b2= self.B2_OUCB,utility_function= uf)
+
         else:
             agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= False)
         
         return agent 
-    
+       
     def set_pop_agents(self):# -> Tuple(List[AgentBase], List[str]):
         pop_agents = []
 
