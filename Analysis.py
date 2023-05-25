@@ -103,7 +103,7 @@ class Simulate():
         print(self.EUS, self.EXP_U_BESTS, self.BEST_ACTIONS)
 
     def _create_ind_agent(self, agent_class_name: str, agent_id: str, uf: UtilityFunctionBase, part_of_agent: bool) -> AgentBase:
-        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent'] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent"] 
+        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent', 'UCBAgent'] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent", "AlwaysSecondBestAgent","PercentBestAgent","-"] 
         assert agent_class_name in Ind_Models
 
         if agent_class_name == 'ThompsonSamplingAgent':
@@ -111,6 +111,9 @@ class Simulate():
 
         elif agent_class_name == 'EpsilonGreedyAgent':
             agent = EpsilonGreedyAgent(id=agent_id, utility_function= uf, part_of_agent= part_of_agent, epsilon= self.AGENT_EPSILON)
+
+        elif agent_class_name == "UCBAgent":
+            agent = UCBAgent(id= agent_id, c_ucb = self.C_UCB, utility_function= uf)
 
         elif agent_class_name == "AlwaysBestAgent":
             agent = AlwaysBestAgent(id=agent_id, utility_function= uf, part_of_agent= part_of_agent)
@@ -127,7 +130,7 @@ class Simulate():
         return agent 
     
     def _create_agent(self, agent_soc_class_name:str, agent_ind_class_name:str, agent_id:str, uf: UtilityFunctionBase) -> AgentBase:
-        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent'] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent", "AlwaysSecondBestAgent","PercentBestAgent","-"] 
+        Ind_Models = ['ThompsonSamplingAgent', 'EpsilonGreedyAgent', 'UCBAgent'] + ["AlwaysRandomAgent", "AlwaysBestAgent", "AlwaysWorstAgent", "AlwaysSecondBestAgent","PercentBestAgent","-"] 
         FE_Models = ["FreeEnergySocialAgent_M1_1_1","FreeEnergySocialAgent_M1_1_2",
                      "FreeEnergySocialAgent_M2_1_1", "FreeEnergySocialAgent_M2_1_2",
                      "FreeEnergySocialAgent_M3_1_1", "FreeEnergySocialAgent_M3_1_2"]
@@ -168,7 +171,7 @@ class Simulate():
             agent = PreferenceBasedSocialAgent(id= agent_id, individual_agent= ind_agent, epsilon= self.EPSILON, lr= self.LR)
         
         elif agent_soc_class_name in "TUCBAgent":
-            agent = TUCBAgent(id= agent_id, c_ucb = self.C_UCB, utility_function= uf)
+            agent = TUCBAgent(id= agent_id, c_ucb = self.C_UCB, epsilon = self.EPSILON, utility_function= uf)
         
         elif agent_soc_class_name in "OUCBAgent":
             agent = OUCBAgent(id= agent_id, c_ucb = self.C_UCB, b1=self.B1_OUCB , b2= self.B2_OUCB,utility_function= uf)
@@ -456,6 +459,8 @@ if __name__ == '__main__':
                  LAMBDA_FE= args.LAMBDA_FE,
                  CONJUGATE_PRIOR= args.CONJUGATE_PRIOR,
                  C_UCB= args.C_UCB,
+                 B1_OUCB= args.B1_OUCB, 
+                 B2_OUCB= args.B2_OUCB,
                  DIVERSITY= args.DIVERSITY, 
                  EPSILON= args.EPSILON,
                  LR= args.LR,
