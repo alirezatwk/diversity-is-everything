@@ -1,3 +1,6 @@
 from .probability_of_choosing_best_action import ProbabilityOfChoosingBestActionVisualizer
 from .probability_of_choosing_actions import ProbabilityOfChoosingActionsVisualizer
+from .probability_of_selecting_agent import ProbabilityOfSelectingAgentVisualizer
 from .action_policy import ActionPolicyVisualizer
+from .regret import RegretVisualizer
+from .free_energy_agents import FreeEnergyVisualizer

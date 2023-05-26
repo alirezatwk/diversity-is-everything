@@ -5,10 +5,7 @@ from tqdm import tqdm
 
 from agents import *
 from results import *
-from visualizers.probability_of_choosing_best_action import ProbabilityOfChoosingBestActionVisualizer
-from visualizers.probability_of_choosing_actions import ProbabilityOfChoosingActionsVisualizer
-from visualizers.regret import RegretVisualizer
-from visualizers.free_energy_agents import FreeEnergyVisualizer
+from visualizers import *
 from utility_functions import UtilityFunctionBase
 from agents import AgentBase
 from environments import EnvironmentBase
@@ -385,14 +382,15 @@ class Simulate():
             for REW_NAME in self.REWARDS_NAME:
                 folder_path = self.SAVE_PATH + f"/selected_agents/{self.SEED}_{REW_NAME}/"
                 
-                visualizer5 = ProbabilityOfChoosingActionsVisualizer(
-                    n_actions= self.AGENTS_COUNT,
+                visualizer5 = ProbabilityOfSelectingAgentVisualizer(
+                    n_agents= self.AGENTS_COUNT,
+                    agents_id= self.AGENTS_ID,
                     max_trial=self.PLOT_MAX_LENGTH,
                     experiment_name = f"Selection Agents[{self.EXPERIMENT_NAME}_{self.SEED}_{REW_NAME}]",
                     data_path= folder_path,
-                    write_path= folder_path+'/visualization.html',
+                    write_path= folder_path+'/visualization5.html',
                 )
-                visualizer5.visualize()   
+                visualizer5.visualize()     
 
         if self.SAVE_PREFERENCE:
             for REW_NAME in self.REWARDS_NAME:  
