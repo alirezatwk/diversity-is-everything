@@ -6,6 +6,7 @@ from tqdm import tqdm
 from agents import *
 from results import *
 from visualizers.probability_of_choosing_best_action import ProbabilityOfChoosingBestActionVisualizer
+from visualizers.probability_of_choosing_actions import ProbabilityOfChoosingActionsVisualizer
 from visualizers.regret import RegretVisualizer
 from visualizers.free_energy_agents import FreeEnergyVisualizer
 from utility_functions import UtilityFunctionBase
@@ -247,6 +248,7 @@ class Simulate():
         given_rewards = np.zeros((self.REPETITION, self.EPISODE_MAX_LENGTH))
         after_rewards = np.zeros((self.REPETITION, self.EPISODE_MAX_LENGTH))
         expected_utils = np.zeros((self.REPETITION, self.EPISODE_MAX_LENGTH))
+        selected_agents = np.zeros((self.REPETITION, self.EPISODE_MAX_LENGTH))
         free_energies = np.zeros((self.AGENTS_COUNT, self.REPETITION, self.EPISODE_MAX_LENGTH))
         history = []
         
@@ -264,24 +266,27 @@ class Simulate():
                         given_rewards[r][trial] = reward
                         after_rewards[r][trial] = self.MAIN_AGENT.apply(reward)
                         expected_utils[r][trial] = exp_us[action]
+                        selected_agents[r][trial] = info['selected_agent']
                         free_energies[:, r, trial] = info['FE']
 
             if self.SAVE_PREFERENCE: history.append(self.POP_AGENTS[0].history)
 
             environment.reset()
-        return taken_actions, given_rewards, after_rewards, expected_utils, free_energies, history
+        return taken_actions, given_rewards, after_rewards, expected_utils, selected_agents, free_energies, history
 
     def simulate(self):
         TAKEN_ACTIONS = {}
         AFTER_REWARDS = {}
         EXP_US = {}
+        SELECTED_AGENTS = {}
         FREE_ENERGIES = {}
         HISTORY = {}
         for ENV, REW_NAME in zip(self.ENVIRONMENTS, self.REWARDS_NAME) :
-            taken_actions, given_rewards, after_rewards, expected_utils, free_energies, history = self._simulate(environment=ENV, exp_us=self.EUS[REW_NAME])
+            taken_actions, given_rewards, after_rewards, expected_utils, selected_agents, free_energies, history = self._simulate(environment=ENV, exp_us=self.EUS[REW_NAME])
             TAKEN_ACTIONS[REW_NAME] = taken_actions
             AFTER_REWARDS[REW_NAME] = after_rewards
             EXP_US[REW_NAME] = expected_utils
+            SELECTED_AGENTS[REW_NAME] = selected_agents
             FREE_ENERGIES[REW_NAME] = free_energies
             HISTORY[REW_NAME] = history 
 
@@ -313,6 +318,14 @@ class Simulate():
                 os.makedirs(self.SAVE_PATH + f"/free_energy/{self.SEED}_{REW_NAME}/", exist_ok = True)
                 with open(self.SAVE_PATH + f'/free_energy/{self.SEED}_{REW_NAME}/{self.AGENTS_ID[0]}.pkl', 'wb') as f:
                     pickle.dump(main_fes, f)
+
+            for REW_NAME in self.REWARDS_NAME:
+                main_agents = ActionsResult(repetition = self.REPETITION, trials=self.EPISODE_MAX_LENGTH)
+                main_agents.set_actions(SELECTED_AGENTS[REW_NAME])
+
+                os.makedirs(self.SAVE_PATH + f"/selected_agents/{self.SEED}_{REW_NAME}/", exist_ok = True)
+                with open(self.SAVE_PATH + f'/selected_agents/{self.SEED}_{REW_NAME}/{self.AGENTS_ID[0]}.pkl', 'wb') as f:
+                    pickle.dump(main_agents, f)
         
         # ## Preferences
         if self.SAVE_PREFERENCE:
@@ -369,6 +382,18 @@ class Simulate():
                                                 )
                 visualizer3.visualize()
 
+            for REW_NAME in self.REWARDS_NAME:
+                folder_path = self.SAVE_PATH + f"/selected_agents/{self.SEED}_{REW_NAME}/"
+                
+                visualizer5 = ProbabilityOfChoosingActionsVisualizer(
+                    n_actions= self.AGENTS_COUNT,
+                    max_trial=self.PLOT_MAX_LENGTH,
+                    experiment_name = f"Selection Agents[{self.EXPERIMENT_NAME}_{self.SEED}_{REW_NAME}]",
+                    data_path= folder_path,
+                    write_path= folder_path+'/visualization.html',
+                )
+                visualizer5.visualize()   
+
         if self.SAVE_PREFERENCE:
             for REW_NAME in self.REWARDS_NAME:  
 
@@ -382,7 +407,6 @@ class Simulate():
                     write_path = folder_path+'/visualization4.html',
                 )
                 visualizer4.visualize()
-
 
 if __name__ == '__main__':
     args = get_args()

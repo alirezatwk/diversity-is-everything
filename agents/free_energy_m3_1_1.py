@@ -155,14 +155,15 @@ class FreeEnergySocialAgent_M3_1_1(AgentBase):
         return agent_ind
     
     def select_action(self) -> int:
-        social_agent_id = self._select_agent()
-        if self.agents_id[social_agent_id] == self.id or self.step == 0:
+        selected_agent_ind = self._select_agent()
+        self.selected_agent_ind = selected_agent_ind
+        if self.agents_id[selected_agent_ind] == self.id or self.step == 0:
             # action = np.random.choice(self.n_actions, p = self.Pi_star[self.agents_id.index(self.id)])
             action = self.individual.select_action()
             self.history.append(self.id)
         else:
-            action = np.random.choice(self.n_actions, p = self.Pi_star[social_agent_id])
-            self.history.append(self.agents_id[social_agent_id])
+            action = np.random.choice(self.n_actions, p = self.Pi_star[selected_agent_ind])
+            self.history.append(self.agents_id[selected_agent_ind])
         self.step += 1
         return action
 
@@ -188,7 +189,8 @@ class FreeEnergySocialAgent_M3_1_1(AgentBase):
             info=info,
             action=action
         )
-        info['FE']= self.FE
+        info['FE'] = self.FE
+        info['selected_agent'] = self.selected_agent_ind
         return observation, personalized_reward, done, info, action
     
     def set_environment_info_after_submission(self):

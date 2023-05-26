@@ -249,6 +249,7 @@ class Simulate():
         given_rewards = np.zeros((self.REPETITION, self.EPISODE_MAX_LENGTH))
         after_rewards = np.zeros((self.REPETITION, self.EPISODE_MAX_LENGTH))
         expected_utils = np.zeros((self.REPETITION, self.EPISODE_MAX_LENGTH))
+        selected_agents = np.zeros((self.REPETITION, self.EPISODE_MAX_LENGTH))
         TS_Policy = np.zeros((len(self.REWARD_PROB_ARMS), self.REPETITION, self.EPISODE_MAX_LENGTH))
         Pi_Star= np.zeros((self.AGENTS_COUNT, len(self.REWARD_PROB_ARMS), self.REPETITION, self.EPISODE_MAX_LENGTH))
         free_energies = np.zeros((self.AGENTS_COUNT, self.REPETITION, self.EPISODE_MAX_LENGTH))
@@ -268,6 +269,7 @@ class Simulate():
                         given_rewards[r][trial] = reward
                         after_rewards[r][trial] = self.MAIN_AGENT.apply(reward)
                         expected_utils[r][trial] = exp_us[action]
+                        selected_agents[r][trial] = info['selected_agent']
                         free_energies[:, r, trial] = info['FE']
                         TS_Policy[:, r, trial] = self.POP_AGENTS[agent_idx].get_TS_policy()
                         Pi_Star[:, :, r, trial] = self.POP_AGENTS[agent_idx].get_Pi_Star()
@@ -275,21 +277,23 @@ class Simulate():
             if self.SAVE_PREFERENCE: history.append(self.POP_AGENTS[0].history)
 
             environment.reset()
-        return taken_actions, given_rewards, after_rewards, expected_utils, free_energies, history, TS_Policy, Pi_Star
+        return taken_actions, given_rewards, after_rewards, expected_utils, selected_agents, free_energies, history, TS_Policy, Pi_Star
 
     def simulate(self):
         TAKEN_ACTIONS = {}
         AFTER_REWARDS = {}
         EXP_US = {}
+        SELECTED_AGENTS = {}
         FREE_ENERGIES = {}
         TS_Policies = {}
         Pi_Stars = {}
         HISTORY = {}
         for ENV, REW_NAME in zip(self.ENVIRONMENTS, self.REWARDS_NAME) :
-            taken_actions, given_rewards, after_rewards, expected_utils, free_energies, history, TS_Policy, Pi_Star = self._simulate(environment=ENV, exp_us=self.EUS[REW_NAME])
+            taken_actions, given_rewards, after_rewards, expected_utils, selected_agents, free_energies, history, TS_Policy, Pi_Star = self._simulate(environment=ENV, exp_us=self.EUS[REW_NAME])
             TAKEN_ACTIONS[REW_NAME] = taken_actions
             AFTER_REWARDS[REW_NAME] = after_rewards
             EXP_US[REW_NAME] = expected_utils
+            SELECTED_AGENTS[REW_NAME] = selected_agents
             FREE_ENERGIES[REW_NAME] = free_energies
             HISTORY[REW_NAME] = history 
             TS_Policies[REW_NAME] = TS_Policy
@@ -343,6 +347,14 @@ class Simulate():
                 os.makedirs(self.SAVE_PATH + f"/free_energy/{self.SEED}_{REW_NAME}/", exist_ok = True)
                 with open(self.SAVE_PATH + f'/free_energy/{self.SEED}_{REW_NAME}/{self.AGENTS_ID[0]}.pkl', 'wb') as f:
                     pickle.dump(main_fes, f)
+            
+            for REW_NAME in self.REWARDS_NAME:
+                main_agents = ActionsResult(repetition = self.REPETITION, trials=self.EPISODE_MAX_LENGTH)
+                main_agents.set_actions(SELECTED_AGENTS[REW_NAME])
+
+                os.makedirs(self.SAVE_PATH + f"/selected_agents/{self.SEED}_{REW_NAME}/", exist_ok = True)
+                with open(self.SAVE_PATH + f'/selected_agents/{self.SEED}_{REW_NAME}/{self.AGENTS_ID[0]}.pkl', 'wb') as f:
+                    pickle.dump(main_agents, f)
 
         # ## Preferences
         if self.SAVE_PREFERENCE:
@@ -418,6 +430,18 @@ class Simulate():
                                                     write_path = folder_path+'/visualization6.html',
                                                 )
                 visualizer6.visualize()
+
+            for REW_NAME in self.REWARDS_NAME:
+                folder_path = self.SAVE_PATH + f"/selected_agents/{self.SEED}_{REW_NAME}/"
+                
+                visualizer7 = ProbabilityOfChoosingActionsVisualizer(
+                    n_actions= self.AGENTS_COUNT,
+                    max_trial=self.PLOT_MAX_LENGTH,
+                    experiment_name = f"Selection Agents[{self.EXPERIMENT_NAME}_{self.SEED}_{REW_NAME}]",
+                    data_path= folder_path,
+                    write_path= folder_path+'/visualization.html',
+                )
+                visualizer7.visualize()         
 
         if self.SAVE_PREFERENCE:
             for REW_NAME in self.REWARDS_NAME:  

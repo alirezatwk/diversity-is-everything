@@ -41,7 +41,7 @@ class MultiArmedBanditEnvironment(EnvironmentBase):
         reward = self._calculate_reward(action=action)
         self._update_state(action=action, agent_id=agent_id)
         observation = {}
-        info = {'FE': [0]}
+        info = {'FE': [0], 'selected_agent': 0}      
         done = False
         return observation, reward, done, info
 
