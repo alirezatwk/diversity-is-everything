@@ -386,7 +386,7 @@ class Simulate():
                     n_agents= self.AGENTS_COUNT,
                     agents_id= self.AGENTS_ID,
                     max_trial=self.PLOT_MAX_LENGTH,
-                    experiment_name = f"Selection Agents[{self.EXPERIMENT_NAME}_{self.SEED}_{REW_NAME}]",
+                    experiment_name = f"Agent Selection Probablity[{self.EXPERIMENT_NAME}_{self.SEED}_{REW_NAME}]",
                     data_path= folder_path,
                     write_path= folder_path+'/visualization5.html',
                 )

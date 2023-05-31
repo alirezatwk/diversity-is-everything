@@ -32,8 +32,8 @@ def get_args():
     parser.add_argument('--PLOT_MAX_LENGTH', default = 200, type= int) 
 
     parser.add_argument('--C_FE', default = 0.5, type= float)
-    parser.add_argument('--N0_FE', default = 100, type= int)
-    parser.add_argument('--LAMBDA_FE', default = 0.99, type= float)
+    parser.add_argument('--N0_FE', default = 1, type= int)
+    parser.add_argument('--LAMBDA_FE', default = 0.01, type= float)
     parser.add_argument('--AGENT_EPSILON', default = 0.1, type= float)
     parser.add_argument('--C_UCB', default = 2, type= float)
     parser.add_argument('--B1_OUCB', default= 0.5, type= float)

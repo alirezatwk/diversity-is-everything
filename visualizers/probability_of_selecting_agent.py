@@ -26,6 +26,7 @@ class ProbabilityOfSelectingAgentVisualizer:
             with open(os.path.join(self.data_path, file_name), 'rb') as pickle_file:
                 agent_agents = pickle.load(pickle_file)
                 name = ''.join(file_name.split('.')[:-1])
+                self.agents_id[0] = name
                 agents_probabilities[name] = {}
                 agents_errors[name] = {}
                 for i in range(self.n_agents):
