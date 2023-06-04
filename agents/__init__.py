@@ -15,3 +15,4 @@ from .always_worst_action import AlwaysWorstAgent
 from .TUCB import TUCBAgent
 from .UCB import UCBAgent
 from .OUCB import OUCBAgent
+from exp4 import EXP4Agent

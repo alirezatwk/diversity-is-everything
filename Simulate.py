@@ -130,7 +130,7 @@ class Simulate():
         FE_Models = ["FreeEnergySocialAgent_M1_1_1","FreeEnergySocialAgent_M1_1_2",
                      "FreeEnergySocialAgent_M2_1_1", "FreeEnergySocialAgent_M2_1_2",
                      "FreeEnergySocialAgent_M3_1_1", "FreeEnergySocialAgent_M3_1_2"]
-        Other_Social_Models = ["PreferenceBasedSocialAgent", "TUCBAgent", "OUCBAgent","-"]
+        Other_Social_Models = ["PreferenceBasedSocialAgent", "TUCBAgent", "OUCBAgent", "EXP4Agent", "-"]
         Soc_Models = FE_Models + Other_Social_Models
 
         assert agent_soc_class_name in Soc_Models
@@ -166,12 +166,15 @@ class Simulate():
             ind_agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= True)
             agent = PreferenceBasedSocialAgent(id= agent_id, individual_agent= ind_agent, epsilon= self.EPSILON, lr= self.LR)
         
-        elif agent_soc_class_name in "TUCBAgent":
+        elif agent_soc_class_name == "TUCBAgent":
             agent = TUCBAgent(id= agent_id, c_ucb = self.C_UCB, epsilon = self.EPSILON, utility_function= uf)
         
-        elif agent_soc_class_name in "OUCBAgent":
+        elif agent_soc_class_name == "OUCBAgent":
             agent = OUCBAgent(id= agent_id, c_ucb = self.C_UCB, b1=self.B1_OUCB , b2= self.B2_OUCB,utility_function= uf)
 
+        elif agent_soc_class_name == "EXP4Agent":
+            agent = EXP4Agent(id= agent_id, utility_function= uf, epsilon= self.EPSILON)
+        
         else:
             agent = self._create_ind_agent(agent_ind_class_name, agent_id, uf, part_of_agent= False)
         
