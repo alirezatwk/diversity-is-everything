@@ -33,6 +33,9 @@ class UCBAgent(AgentBase):
         super().set_environment(environment, exp_us)
         self.trial = 0                                          #number of total trials 
         self.actions = []    
+        self.Q = np.zeros((self.n_actions,1))                #action value function(expected reward) for each arm
+        self.N = np.zeros((self.n_actions,1))                #number of doing each arm by the agent
+        self.UCB = np.zeros((self.n_actions,1))              #Upper confidence bound for each arm
     
     def update(self, observation: object, personalized_reward: float, done: bool, info: object, action: int) -> None:
 
@@ -57,9 +60,5 @@ class UCBAgent(AgentBase):
         return action 
     
     def set_environment_info_after_submission(self):
-        self.n_agents = self.environment.get_n_agents()
-        self.agents_id = self.environment.get_agents_id()
+        pass
         
-        self.Q = np.zeros((self.n_actions,1))                #action value function(expected reward) for each arm
-        self.N = np.zeros((self.n_actions,1))                #number of doing each arm by the agent
-        self.UCB = np.zeros((self.n_actions,1))              #Upper confidence bound for each arm
