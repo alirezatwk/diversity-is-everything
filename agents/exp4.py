@@ -12,7 +12,7 @@ class EXP4Agent(AgentBase):
             id: str,
             utility_function: UtilityFunctionBase,
             epsilon:float,
-            gamma:0,
+            gamma: float = 0,
             environment: EnvironmentBase = None,
     ):
         super(EXP4Agent, self).__init__(
@@ -43,7 +43,7 @@ class EXP4Agent(AgentBase):
 
         rewards_hat = np.ones((self.n_actions,1))
         z =  (personalized_reward - self.min_u) / (self.max_u - self.min_u)
-        rewards_hat[action] = 1 - (1 - z)/self.P[action]
+        rewards_hat[action] = 1 - (1 - z)/self.P[0][action]
 
         rewards_tilda = self.E @ rewards_hat 
         self.Q = np.exp(self.etta * rewards_tilda)
@@ -58,7 +58,7 @@ class EXP4Agent(AgentBase):
 
     def _select_agent(self) -> int:
         # select the agent based on selecting policy
-        agent_ind = np.random.choice(self.n_agents, p = self.Q)
+        agent_ind = np.random.choice(self.n_agents, p = self.Q.squeeze())
         return agent_ind
     
     def select_action(self):
@@ -74,6 +74,7 @@ class EXP4Agent(AgentBase):
         self.agents_id = self.environment.get_agents_id()
         
         self.Q = np.ones((self.n_agents,1)) #Expert Weights(M*1)
+        self.Q = self.Q /np.sum(self.Q)
         self.E = self.social_information/np.sum(self.social_information, axis = 1, keepdims = True) # Experts' advice(M*K)
         self.E_star = 0
 
