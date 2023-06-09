@@ -36,7 +36,9 @@ class UCBAgent(AgentBase):
         self.Q = np.zeros((self.n_actions,1))                #action value function(expected reward) for each arm
         self.N = np.zeros((self.n_actions,1))                #number of doing each arm by the agent
         self.UCB = np.zeros((self.n_actions,1))              #Upper confidence bound for each arm
-    
+        self.max_u = exp_us.max()
+        self.min_u = exp_us.min()
+
     def update(self, observation: object, personalized_reward: float, done: bool, info: object, action: int) -> None:
 
         # update action values
@@ -53,7 +55,9 @@ class UCBAgent(AgentBase):
     def select_action(self):
         if self.trial < self.n_actions:
             action = np.random.choice(np.flatnonzero(self.N == 0))
-        else:        
+        else: 
+            # f = 1 + (self.trial + 1)*np.log(self.trial + 1)**2
+            # self.UCB = self.Q + np.sqrt(self.c_ucb * np.log(f)/(self.N))    
             self.UCB = self.Q + np.sqrt(self.c_ucb * np.log(self.trial+1)/(self.N))
             action = np.random.choice(np.flatnonzero(self.UCB == self.UCB.max()))
 

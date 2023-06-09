@@ -16,6 +16,7 @@ class FreeEnergySocialAgent_M1_1_1(AgentBase):
             lamda: float, 
             c: float,
             n0: float,
+            n_samples: int,
             conjugate_prior: str,
             epsilon: float, 
             environment: EnvironmentBase = None,
@@ -29,6 +30,7 @@ class FreeEnergySocialAgent_M1_1_1(AgentBase):
         self.lamda = lamda 
         self.c = c
         self.n0 = n0
+        self.n_samples = n_samples
         self.conjugate_prior = conjugate_prior 
         self.epsilon = epsilon 
         
@@ -74,7 +76,11 @@ class FreeEnergySocialAgent_M1_1_1(AgentBase):
     def _get_samples(self,hp1:list[float],hp2:list[float]):
         if self.conjugate_prior == "Bernoulli":
             # samples = [np.random.beta(hp1[i], hp2[i])[0] for i in range(len(hp1))]
-            samples = list(np.random.beta(hp1, hp2)[0])
+            hp1 = np.expand_dims(self.hp1, axis=0)
+            hp1 = np.repeat(hp1, self.n_samples, axis=0)
+            hp2 = np.expand_dims(self.hp2, axis=0)
+            hp2 = np.repeat(hp2, self.n_samples, axis=0)
+            samples = np.random.beta(hp1, hp2)
         elif self.conjugate_prior == "Gaussian with known var=1":
             # samples = [np.random.normal(hp1[i],hp2[i])[0] for i in range(len(hp1))]
             samples = list(np.random.normal(hp1, hp2)[0])
@@ -104,13 +110,16 @@ class FreeEnergySocialAgent_M1_1_1(AgentBase):
             f = f * norm.pdf(x, loc = self.hp1[action_ind], scale = self.hp2[action_ind])
             f = f / norm.cdf(x, loc = self.hp1[action_ind], scale = self.hp2[action_ind])
         return f
+    
+    def _calculate_TS_policy_estimation(self) -> np.array:
+        TS_policy = np.zeros(self.n_actions)
+        samples = self._get_samples(self.hp1,self.hp2)
+        max_acts = np.argmax(samples, axis = 1)
+        TS_policy = np.array([(max_acts == i).sum() for i in range(self.n_actions)]) 
+        TS_policy = TS_policy / np.sum(TS_policy)
+        return TS_policy
 
-    def _calculate_TS_policy(self, n_samples = 1000) -> np.array:
-        # TS_policy = np.zeros(self.n_actions)
-        # for i in range(n_samples):
-        #     samples = np.array(self._get_samples(self.means,self.stds))
-        #     act = self._get_best_action(samples)
-        #     TS_policy[act] += 1     
+    def _calculate_TS_policy(self, n_samples = 100) -> np.array:  
         TS_policy = [integrate.quad(lambda x: self._f(x,a), self.lower_bound[a], self.upper_bound[a], epsabs = 1e-3)[0] for a in range(self.n_actions)]
         TS_policy = np.array(TS_policy)
         TS_policy = TS_policy / np.sum(TS_policy)
@@ -141,7 +150,9 @@ class FreeEnergySocialAgent_M1_1_1(AgentBase):
             self.lower_bound[action] = new_mean - 4 * new_std
             self.upper_bound[action] = new_mean + 4 * new_std
 
-        self.pi_TS = self._calculate_TS_policy()
+        # self.pi_TS = self._calculate_TS_policy()
+        self.pi_TS = self._calculate_TS_policy_estimation()
+        # print(self.pi_TS - self.pi_TS_estimation)
         self.FE = self._FE_Calculator()
         for i in range(self.n_agents):
             act = self.environment.get_action(step=self.step-2, agent_id=self.agents_id[i])
@@ -197,7 +208,9 @@ class FreeEnergySocialAgent_M1_1_1(AgentBase):
         self.n_agents = self.environment.get_n_agents()
         self.k = self.environment.get_n_actions()
         self.social_information = self.n0 * np.ones((self.n_agents, self.k))
-        self.pi_TS = self._calculate_TS_policy()
+        # self.pi_TS = self._calculate_TS_policy()
+        self.pi_TS = np.ones(self.n_actions) / self.n_actions
+        self.pi_TS = self._calculate_TS_policy_estimation()
         self.FE = self._FE_Calculator()
         self.agents_id = self.environment.get_agents_id()
     

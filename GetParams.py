@@ -52,7 +52,7 @@ def get_args():
     parser.add_argument('--BETA_STD', default= 0.1, type= float)
     parser.add_argument('--GAMMA_MEAN', default= 1.75, type= float)
     parser.add_argument('--GAMMA_STD', default= 0.25, type= float)
-    parser.add_argument('--N_SAMPLES_EXP_U', default= 1000, type= int)
+    parser.add_argument('--N_SAMPLES_EXP_U', default= 1500, type= int)
 
     arguments = parser.parse_args()
     print("-"*10)
