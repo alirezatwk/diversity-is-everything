@@ -1,10 +1,11 @@
+from abc import ABC, abstractmethod
+
 import numpy as np
 
-from abc import ABC, abstractmethod
 from agents import AgentBase
+from configs import INITIAL_STD
 from environments import EnvironmentBase
 from utility_functions import UtilityFunctionBase
-from configs import INITIAL_STD
 
 
 class ConjugatePriorBase(ABC):
