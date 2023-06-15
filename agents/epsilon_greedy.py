@@ -11,6 +11,7 @@ class EpsilonGreedyAgent(AgentBase):
             id: str,
             utility_function: UtilityFunctionBase,
             epsilon: float,
+            epsilon_decay: float,
             environment: EnvironmentBase,
             part_of_agent: bool = False,
     ):
@@ -19,8 +20,9 @@ class EpsilonGreedyAgent(AgentBase):
             environment=environment,
             part_of_agent=part_of_agent
         )
-        self.epsilon = epsilon
         self.utility_function = utility_function
+        self.epsilon = epsilon
+        self.epsilon_decay = epsilon_decay
         self.steps = np.zeros(self.n_actions)
         self.q_values = np.zeros(self.n_actions)
 
@@ -40,6 +42,7 @@ class EpsilonGreedyAgent(AgentBase):
     def update(self, observation: object, personalized_reward: float, done: bool, info: object, action: int):
         self.steps[action] += 1
         self.q_values[action] += (personalized_reward - self.q_values[action]) / self.steps[action]
+        self.epsilon *= self.epsilon_decay
 
     def set_environment_info_after_submission(self):
         pass
