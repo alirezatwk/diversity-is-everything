@@ -54,6 +54,4 @@ class MultiArmedBanditEnvironment(EnvironmentBase):
         return self.agents_actions[agent_id][step]
 
     def reset(self):
-        self.agents = {}
         self.agents_actions = {}
-        self.is_submitted = False

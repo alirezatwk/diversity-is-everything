@@ -2,6 +2,7 @@ from abc import ABC
 from typing import List
 
 
+# TODO: Clean the methods of this class.
 class EnvironmentBase(ABC):
 
     def __init__(self):
@@ -26,4 +27,7 @@ class EnvironmentBase(ABC):
         raise NotImplementedError()
 
     def get_action(self, step: int, agent_id: str):
+        raise NotImplementedError()
+
+    def reset(self):
         raise NotImplementedError()
